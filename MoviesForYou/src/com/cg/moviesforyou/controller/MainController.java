@@ -1,6 +1,7 @@
 package com.cg.moviesforyou.controller;
 
 import com.cg.moviesforyou.dto.*;
+import com.cg.moviesforyou.exception.UserException;
 import com.cg.moviesforyou.service.*;
 
 import java.util.*;
@@ -84,6 +85,12 @@ public class MainController {
 	@RequestMapping(value = "/addTheatreToDatabase", method = RequestMethod.POST)
 	public ModelAndView addTheatre(@ModelAttribute("myTheatreForm") Theatre theatre,  BindingResult result) {
 		theatreService.save(theatre);
+		List<Theatre> myTheatreList=theatreService.findAll();
+		return new ModelAndView("ShowTheatrePage","theatreData", myTheatreList);
+	}
+	@RequestMapping(value = "/addCustomerToDatabase", method = RequestMethod.POST)
+	public ModelAndView addCustomer(@ModelAttribute("myCustomerForm") Customer customer,  BindingResult result) throws UserException {
+		customerService.addCustomer(customer);
 		List<Theatre> myTheatreList=theatreService.findAll();
 		return new ModelAndView("ShowTheatrePage","theatreData", myTheatreList);
 	}
