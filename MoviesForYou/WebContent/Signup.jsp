@@ -13,7 +13,7 @@
 Add Product
 
 <table border="20" BORDERCOLOR=BLUE style="background-color: yellow;">
-<fo:form action="addCustomerToDatabase"  method="post" modelAttribute="myCustomerForm">
+<fo:form action="pagesubmit"  method="post" modelAttribute="myForm">
 <tr>
 <td>Id</td>
 <td><fo:input path="customerId"/></td>
@@ -26,8 +26,8 @@ Add Product
 </tr>
 <tr>
 <td> Phone Number</td>
-<td><fo:input path="contactNumber"/></td>
-<td><span><fo:errors path="contactNumber"></fo:errors></span></td>
+<td><fo:input path="customerPhone"/></td>
+<td><span><fo:errors path="customerPhone"></fo:errors></span></td>
 </tr>
 <tr>
 <td>Password</td>

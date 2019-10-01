@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fo" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
@@ -25,9 +25,9 @@ table, th, td {
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body>
+<body background="<c:url value='/resources/movies2.jpg'/>" style="background-size: 100% 1000%;background-repeat: no-repeat;">
 	
-	<table>
+	<table align="center">
 	<thead><tr><th>Add Theatre</th></tr></thead>
 	
 		<fo:form action="addTheatreToDatabase" method="post" modelAttribute="myTheatreForm">
