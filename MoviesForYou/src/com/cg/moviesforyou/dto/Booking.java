@@ -20,7 +20,6 @@ public class Booking {
 	@Column(name="booking_id")
 	private BigInteger bookingId;
 	@Column(name="seats_booked")
-	@NotNull(message="Please enter required Seats!")
 	private Integer seatsBooked;
 	@Column(name="total_cost")
 	private Integer totalCost;

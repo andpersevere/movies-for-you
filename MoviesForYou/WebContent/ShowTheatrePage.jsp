@@ -17,7 +17,7 @@
 			<th>Theatre City</th>
 			<th>Theatre Pincode</th>
 		</tr>
-		<fo:forEach var="theatre" items="${theatreData}">
+		<fo:forEach var="theatre" items="${theatresList}">
 			<tr>
 				<td>${theatre.theatreId}</td>
 				<td>${theatre.theatreName}</td>

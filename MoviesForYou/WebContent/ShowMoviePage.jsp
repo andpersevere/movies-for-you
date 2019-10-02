@@ -19,9 +19,9 @@
 			<th>Movie Length</th>
 			<th>Director</th>
 			<th>Release Date</th>
-			<th>Theaters</th>
+			
 		</tr>
-		<fo:forEach var="movie" items="${movieData}">
+		<fo:forEach var="movie" items="${movieList}">
 			<tr>
 				<td>${movie.movieId}</td>
 				<td>${movie.movieName}</td>
@@ -30,10 +30,7 @@
 				<td>${movie.movieLength}</td>
 				<td>${movie.director}</td>
 				<td>${movie.movieReleaseDate}</td>
-				<td><% 
-				out.print(request.getAttribute("theatre"));
 				
-				%></td>
 				
 				<%-- <td>${movie.movieList}</td>
 				<td>${movie.moviesList}</td> --%>
