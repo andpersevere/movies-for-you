@@ -1,6 +1,4 @@
 package com.cg.moviesforyou.controller;
-
-
 import com.cg.moviesforyou.dto.*;
 import com.cg.moviesforyou.exception.UserException;
 import com.cg.moviesforyou.service.*;
@@ -12,6 +10,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -64,7 +63,8 @@ public class MainController {
 			session.setAttribute("username", username);
 			return new ModelAndView("AdminPage", "adminName", username);
 		} else {
-			return new ModelAndView("InvalidLoginPage");
+			model.put("error", "invalid credentials");
+			return new ModelAndView("LogInPage");
 		}
 	}
 
@@ -188,72 +188,108 @@ public class MainController {
 
 	@RequestMapping(value = "/ChooseMovieSubmit", method = RequestMethod.POST)
 	public String chooseTheatreRequest(@RequestParam("movieId") String movieId, Map<String, Object> model) {
+
 		Integer movieID = Integer.parseInt(movieId);
-		List<String> theatreList;
+		System.out.println("movie id " + movieID);
+		List<Theatre> theatreList;
 
 //			movieId = customerService.validateMovieId(movieID);
 		theatreList = customerService.getTheatreByMovieId(movieID);
 		if (theatreList.size() > 0) {
+			System.out.println("in loop");
 			model.put("theatresList", theatreList);
+			System.out.println("model value done");
 			session.setAttribute("movieId", movieID);
+			System.out.println("session value set");
+
 		} else {
 			model.put("theatresList", theatreList);
 			model.put("message", "Sorry, no theatre is currently showcasing this movie.");
-			return "ChooseMoviePage";
+			return "ChoseMoviePage";
 		}
 
-		return "ChooseTheatrePage";
+		return "ChoseTheatrePage";
 	}
 
-	@RequestMapping(value = "/chooseTheatreSubmit", method = RequestMethod.POST)
+	@RequestMapping(value = "/choseTheatreSubmit", method = RequestMethod.POST)
 	public String chooseShowRequest(@RequestParam("theatreId") String theatreId, Map<String, Object> model) {
 		Integer theatreID = Integer.parseInt(theatreId);
+		System.out.println("theatre is" + theatreID);
 		Integer movieid = Integer.parseInt(session.getAttribute("movieId").toString());
-		List<String> showsList;
+		System.out.println("movie is" + movieid);
+		List<Show> showsinList;
+		showsinList = customerService.getShows(movieid, theatreID);
 
-//			centerId = userService.validateCenterId(sCenterId, userService.getCenterList());
-		showsList = customerService.getShows(movieid, theatreID);
-		if (showsList.size() > 0) {
-			model.put("showsList", showsList);
+		System.out.println(showsinList);
+		if (showsinList.size() > 0) {
+			System.out.println("in loop");
+			model.put("showsList", showsinList);
+			System.out.println("model put done");
 			session.setAttribute("theatreId", theatreID);
+			System.out.println("theatre set as" + theatreID);
+
 		} else {
-			model.put("showsList", customerService.getShows(movieid, theatreID));
+			System.out.println("outside show loop");
+			model.put("showsList", showsinList);
 			model.put("message", "Sorry, no shows in this theatre .");
-			return "ChooseTheatrePage";
+			return "ChoseTheatrePage";
 		}
 
 		return "ChoseShowPage";
 	}
 
 	@RequestMapping(value = "/choseShowSubmit", method = RequestMethod.POST)
-	public ModelAndView addBookingToDDatabase(@RequestParam("showId") String showId,
-			@RequestParam("showTimings") Date showTimings, @RequestParam("userId") BigInteger customerId,
+	public ModelAndView addBookingToDatabase(@RequestParam("showId") String showId,
 			@RequestParam("seatsBooked") Integer seatsBooked, Map<String, Object> model) throws Exception {
-		
+
 		Booking booking = new Booking();
 		LocalDateTime dateTime;
 		booking.setFlag(0);
-		booking.setSeatsBooked(seatsBooked);
-		Show show = new Show();
-		show.setShowId(Integer.parseInt(showId));
-		booking.setShow(show);
-		Customer customer=new Customer();
-		customer.setCustomerId(customerId);
-		booking.setCustomer(customer);
-		booking.setTotalCost(200*seatsBooked);
-		booking.setPayment("Done");
-		model.put("message", "Appointment booked successfully");
+		Integer available_seats = customerService.getAvailableSeats(Integer.parseInt(showId));
+		if (seatsBooked > available_seats) {
 
-	Boolean bookingStatus = customerService.addBooking(booking);
-	if(bookingStatus==true)
-	{
-		String bookingstatus = "Succesfull!";
-		return new ModelAndView("ViewBookingPage", "bookingstatus", bookingstatus);
-	}else
-	{
-		String bookingstatus = "Unsuccessfull!";
-		return new ModelAndView("ViewBookingPage", "bookingstatus", bookingstatus);
+			return new ModelAndView("ChoseShowPage", "error", "too many booked seats");
+		} else {
+			booking.setSeatsBooked(seatsBooked);
+			Show show = new Show();
+			show.setShowId(Integer.parseInt(showId));
+			booking.setShow(show);
+			Customer customer = new Customer();
+			
+			customer.setCustomerId((BigInteger)(session.getAttribute("customerId")));
+			booking.setCustomer(customer);
+			booking.setTotalCost(200 * seatsBooked);
+			booking.setPayment("Done");
+			Boolean bookingStatus = customerService.addBooking(booking);
+			if (bookingStatus == true) {
+				BigInteger bookingId=customerService.getBookingId((BigInteger)(session.getAttribute("customerId")));
+				String bookingstatus = "Succesfull! ";
+				model.put("bookingId", bookingId);
+				session.setAttribute("bookingId", bookingId);
+				customerService.updateSeats(Integer.parseInt(showId),available_seats, seatsBooked);
+				return new ModelAndView("ViewBookingPage", "bookingstatus", bookingstatus);
+			} else {
+				String bookingstatus = "Unsuccessfull!";
+				return new ModelAndView("ViewBookingPage", "bookingstatus", bookingstatus);
+			}
+		}
 	}
-}
+	@RequestMapping(value = "/ViewBookingPage", method = RequestMethod.GET)
+	public ModelAndView getAllBookings() {
+		List<Booking> bookings=customerService.viewBookings((BigInteger)(session.getAttribute("customerId")));
+		return new ModelAndView("ViewBookingPage", "data", bookings);
+	}
+	@RequestMapping(value = "/CancelBooking", method = RequestMethod.GET)
+	public ModelAndView CancelBooking() {
+	return new ModelAndView("CancelBooking","data","bookings");
+	}
+	@RequestMapping(value = "/CancelBookingSubmit", method = RequestMethod.POST)
+	public String cancelBooking(@RequestParam("bookingId") String bookingId, Map<String, Object> model) {
+		
+			customerService.cancelBooking((BigInteger)session.getAttribute("bookingId"));
+	
+		return "CustomerPage";
+
+	}
 
 }

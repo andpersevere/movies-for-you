@@ -12,9 +12,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
 import com.cg.moviesforyou.dto.Booking;
@@ -25,9 +27,10 @@ import com.cg.moviesforyou.dto.Theatre;
 import com.cg.moviesforyou.exception.UserException;
 
 @Repository("customerDao")
+@Transactional
 public class CustomerDaoImpl implements CustomerDao {
 
-	@PersistenceContext
+	@PersistenceContext(type = PersistenceContextType.EXTENDED)
 	EntityManager manager;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -67,7 +70,7 @@ public class CustomerDaoImpl implements CustomerDao {
 		return movieList;
 	}
 
-	public List<String> getTheatreByMovieId(Integer movieId) {
+	public List<Theatre> getTheatreByMovieId(Integer movieId) {
 		Movie movie = manager.find(Movie.class, movieId);
 		if (movie != null) {
 			List<Theatre> theatresList = movie.getTheatre();
@@ -75,25 +78,29 @@ public class CustomerDaoImpl implements CustomerDao {
 			theatresList.forEach(theatre -> {
 				nameIdList.add(theatre.getTheatreId() + " " + theatre.getTheatreName());
 			});
-			return nameIdList;
+			return theatresList;
 		}
 		return null;
 	}
-
-	public List<String> getShows(Integer movieId, Integer theatreId) {
+	
+	public List<Show> getShows(Integer movieId, Integer theatreId) {
 		Theatre theatre = manager.find(Theatre.class, theatreId);
 		if (theatre != null) {
 			List<Show> showsList = theatre.getShowsList();
-
-			List<String> timings = new ArrayList<String>();
-			showsList.forEach(show -> {
-				if (show.getMovie().getMovieId() == movieId) {
-					timings.add(show.getShowId() + " : " + sdf.format(show.getShow_date()) + " : "
-							+ sdf1.format(show.getShow_timings()) + " seats available : " + show.getAvailableSeats());
+			System.out.println("show list"+showsList);
+			List<Show> selectedShow = new ArrayList<Show>();
+			for(Show showin : showsList) {
+				if(showin.getMovie().getMovieId()==movieId) {
+					selectedShow.add(showin);
 				}
-			});
-			return timings;
+			}
+			System.out.println("show exists");
+			return selectedShow;
 		}
+		else {
+			System.out.println("theatre dn exist");
+		}
+		System.out.println("show not exissts");
 		return null;
 	}
 
@@ -110,7 +117,7 @@ public class CustomerDaoImpl implements CustomerDao {
 		return true;
 	}
 
-	public List<String> viewBookings(BigInteger userID) {
+	public List<Booking> viewBookings(BigInteger userID) {
 		Customer customer = manager.find(Customer.class, userID);
 		if (customer != null) {
 			List<Booking> bookingsList = customer.getBookings();
@@ -121,7 +128,7 @@ public class CustomerDaoImpl implements CustomerDao {
 								+ booking.getShow().getTheatre().getTheatreName() + " : "
 								+ booking.getShow().getMovie().getMovieName());
 			});
-			return bookingIds;
+			return bookingsList;
 		}
 		return null;
 	}

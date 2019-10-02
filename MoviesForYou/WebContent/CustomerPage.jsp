@@ -19,6 +19,6 @@
 </table> 
 	<a href="BookingPage">Make Booking</a><br>
 	<a href="ViewBookingPage">View Bookings</a><br>
-	<a href="CancelBookingPage">Cancel Booking</a><br>
+	<a href="CancelBooking">Cancel Booking</a><br>
 </body>
 </html>

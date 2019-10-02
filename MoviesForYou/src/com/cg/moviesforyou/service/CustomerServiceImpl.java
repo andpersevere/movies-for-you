@@ -13,6 +13,8 @@ import com.cg.moviesforyou.dao.*;
 import com.cg.moviesforyou.dto.Booking;
 import com.cg.moviesforyou.dto.Customer;
 import com.cg.moviesforyou.dto.Movie;
+import com.cg.moviesforyou.dto.Show;
+import com.cg.moviesforyou.dto.Theatre;
 import com.cg.moviesforyou.exception.UserException;
 
 @Service("customerService")
@@ -37,12 +39,12 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerDao.getMovies();
 	}
 
-	public List<String> getTheatreByMovieId(Integer movieId) {
+	public List<Theatre> getTheatreByMovieId(Integer movieId) {
 
 		return customerDao.getTheatreByMovieId(movieId);
 	}
 
-	public List<String> getShows(Integer movieId, Integer theatreSelected) {
+	public List<Show> getShows(Integer movieId, Integer theatreSelected) {
 		return customerDao.getShows(movieId, theatreSelected);
 	}
 
@@ -58,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return false;
 	}
 
-	public List<String> viewBookings(BigInteger userID) {
+	public List<Booking> viewBookings(BigInteger userID) {
 		return customerDao.viewBookings(userID);
 	}
 

@@ -4,12 +4,17 @@
     
 <!DOCTYPE html>
 <html>
+<%
+	if (null == session.getAttribute("customerId")) {
+		response.sendRedirect("LogInPage");
+	} else {
+		
+%>
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
-<jsp:include page="ShowShowPage.jsp"></jsp:include>
 <table border=1>
 
 <tr><td>Show Id</td>
@@ -20,7 +25,7 @@
 			<tr>
 				
 				<td>${show.showId}</td>
-				<td>${show.showTimings}</td>
+				<td>${show.show_timings}</td>
 				<td>${show.availableSeats}</td>
 
 			</tr>
@@ -35,9 +40,10 @@
 <td>User Id:<input type="text" value="<% out.print(session.getAttribute("customerId")); %>" name="customerId" readonly/><br></td>
 <td>Movie Id:<input type="text" value="<% out.print(session.getAttribute("movieId")); %>" name="movieId" readonly><br></td>
 <td>Theatre Id:<input type="text" value="<% out.print(session.getAttribute("theatreId")); %>" name="theatreId" readonly><br></td>
-<td>><input type="submit" value="Book Ticket" /></td>
+<td><input type="submit" value="Book Ticket" /></td>
 </tr>
 </table>
 </form>
 </body>
+<% } %>
 </html>

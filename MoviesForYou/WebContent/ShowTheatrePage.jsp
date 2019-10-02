@@ -23,8 +23,7 @@
 				<td>${theatre.theatreName}</td>
 				<td>${theatre.cityName}</td>
 				<td>${theatre.cityPincode}</td>
-				<%-- <td>${theatre.movieList}</td>
-				<td>${theatre.showsList}</td> --%>
+
 			</tr>
 		</fo:forEach>
 

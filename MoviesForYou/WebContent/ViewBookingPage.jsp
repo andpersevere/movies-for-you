@@ -11,10 +11,32 @@
 <table>
 <a:forEach var="pro" items="${bookingstatus}">
 <tr>
-<td>Booking Status : ${bookingstatus}</td>
-
+<td>Booking : ${bookingstatus}</td>
 </tr>
 </a:forEach>
-</table> 
+</table>
+<table border="1">
+	<thead><tr><th>View Booking</th></tr></thead>
+		<tr>
+			<th>Booking Id</th>
+			<th>Seats Booked</th>
+
+
+			
+		</tr>
+		<a:forEach var="booking" items="${data}">
+			<tr>
+				<td>${booking.bookingId}</td>
+				<td>${booking.seatsBooked}</td>
+	
+			
+				
+				
+				<%-- <td>${movie.movieList}</td>
+				<td>${movie.moviesList}</td> --%>
+			</tr>
+		</a:forEach>
+
+	</table> 
 </body>
 </html>

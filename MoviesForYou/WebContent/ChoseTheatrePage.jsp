@@ -14,18 +14,18 @@
 <title>Chose Theatre</title>
 </head>
 <body>
-<jsp:include page="ShowTheatrePage.jsp"></jsp:include>
+
 <table border=1>
 
 <tr><td>Theatre Id</td>
 <td>Theatre Name</td>
 </tr>
 
-<c:forEach var="theatre" items="${theatresList}">
+<c:forEach var="theatrein" items="${theatresList}">
 			<tr>
 				
-				<td>${theatre.theatreId}</td>
-				<td>${theatre.theatreName}</td>
+				<td>${theatrein.theatreId}</td>
+				<td>${theatrein.theatreName}</td>
 
 
 			</tr>
@@ -35,10 +35,9 @@
 <form action="choseTheatreSubmit" method="POST">
 <table><tr>
 <td>Select Theatre Id:<input type="text" name="theatreId"><br>
-<td>Select Date and Time:<input type="datetime-local" name="dateAndTime" /><br></td>
 <td>User Id:<input type="text" value="<% out.print(session.getAttribute("customerId")); %>" name="customerId" readonly/><br></td>
 <td>Movie Id:<input type="text" value="<% out.print(session.getAttribute("movieId")); %>" name="movieId" readonly><br></td>
-<td>><input type="submit" value="Chose Theatre" /></td>
+<td><input type="submit" value="Chose Theatre" /></td>
 </tr>
 </table>
 </form>

@@ -61,7 +61,9 @@
 		class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory"
 			ref="entityManagerFactory" />
+			
 	</bean>
+	
 
 	<!-- This is required to handle transactions via Annotations like @Transactional -->
 	<tx:annotation-driven
