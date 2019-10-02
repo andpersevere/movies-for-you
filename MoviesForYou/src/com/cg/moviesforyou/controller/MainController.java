@@ -74,7 +74,7 @@ public class MainController {
 		myLanguageList.add("English");
 		myLanguageList.add("Marathi");
 		myLanguageList.add("Bengali");
-
+		myLanguageList.add("Punjabi");
 		request.setAttribute("theatresitem", theatresList);
 		model.put("languageDataItem", myLanguageList);
 		model.put("genreDataItem", myGenreList);
