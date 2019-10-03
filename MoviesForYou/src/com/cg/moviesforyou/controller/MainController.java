@@ -1,4 +1,5 @@
 package com.cg.moviesforyou.controller;
+
 import com.cg.moviesforyou.dto.*;
 import com.cg.moviesforyou.exception.UserException;
 import com.cg.moviesforyou.service.*;
@@ -191,23 +192,26 @@ public class MainController {
 
 		Integer movieID = Integer.parseInt(movieId);
 		System.out.println("movie id " + movieID);
-		List<Theatre> theatreList;
-
-//			movieId = customerService.validateMovieId(movieID);
-		theatreList = customerService.getTheatreByMovieId(movieID);
-		if (theatreList.size() > 0) {
-			System.out.println("in loop");
-			model.put("theatresList", theatreList);
-			System.out.println("model value done");
-			session.setAttribute("movieId", movieID);
-			System.out.println("session value set");
-
-		} else {
-			model.put("theatresList", theatreList);
-			model.put("message", "Sorry, no theatre is currently showcasing this movie.");
+		if (movieService.find(movieID) == null) {
 			return "ChoseMoviePage";
-		}
+		} else {
 
+			List<Theatre> theatreList;
+
+			theatreList = customerService.getTheatreByMovieId(movieID);
+			if (theatreList.size() > 0) {
+				System.out.println("in loop");
+				model.put("theatresList", theatreList);
+				System.out.println("model value done");
+				session.setAttribute("movieId", movieID);
+				System.out.println("session value set");
+
+			} else {
+				model.put("theatresList", theatreList);
+				model.put("message", "Sorry, no theatre is currently showcasing this movie.");
+				return "ChoseMoviePage";
+			}
+		}
 		return "ChoseTheatrePage";
 	}
 
@@ -255,18 +259,18 @@ public class MainController {
 			show.setShowId(Integer.parseInt(showId));
 			booking.setShow(show);
 			Customer customer = new Customer();
-			
-			customer.setCustomerId((BigInteger)(session.getAttribute("customerId")));
+
+			customer.setCustomerId((BigInteger) (session.getAttribute("customerId")));
 			booking.setCustomer(customer);
 			booking.setTotalCost(200 * seatsBooked);
 			booking.setPayment("Done");
 			Boolean bookingStatus = customerService.addBooking(booking);
 			if (bookingStatus == true) {
-				BigInteger bookingId=customerService.getBookingId((BigInteger)(session.getAttribute("customerId")));
+				BigInteger bookingId = customerService.getBookingId((BigInteger) (session.getAttribute("customerId")));
 				String bookingstatus = "Succesfull! ";
 				model.put("bookingId", bookingId);
 				session.setAttribute("bookingId", bookingId);
-				customerService.updateSeats(Integer.parseInt(showId),available_seats, seatsBooked);
+				customerService.updateSeats(Integer.parseInt(showId), available_seats, seatsBooked);
 				return new ModelAndView("ViewBookingPage", "bookingstatus", bookingstatus);
 			} else {
 				String bookingstatus = "Unsuccessfull!";
@@ -274,20 +278,25 @@ public class MainController {
 			}
 		}
 	}
+
 	@RequestMapping(value = "/ViewBookingPage", method = RequestMethod.GET)
 	public ModelAndView getAllBookings() {
-		List<Booking> bookings=customerService.viewBookings((BigInteger)(session.getAttribute("customerId")));
+		List<Booking> bookings = customerService.viewBookings((BigInteger) (session.getAttribute("customerId")));
 		return new ModelAndView("ViewBookingPage", "data", bookings);
 	}
+
 	@RequestMapping(value = "/CancelBooking", method = RequestMethod.GET)
-	public ModelAndView CancelBooking() {
-	return new ModelAndView("CancelBooking","data","bookings");
+	public ModelAndView cancelBookingPage(Map<String, Object> model) {
+		System.out.println("in cancel get");
+		List<Booking> bookings = customerService.viewBookings((BigInteger) session.getAttribute("bookingId"));
+		model.put("bookings", bookings);
+		return new ModelAndView("CancelBooking", "data", bookings);
 	}
+
 	@RequestMapping(value = "/CancelBookingSubmit", method = RequestMethod.POST)
 	public String cancelBooking(@RequestParam("bookingId") String bookingId, Map<String, Object> model) {
-		
-			customerService.cancelBooking((BigInteger)session.getAttribute("bookingId"));
-	
+		customerService.cancelBooking((BigInteger) session.getAttribute("bookingId"));
+
 		return "CustomerPage";
 
 	}
