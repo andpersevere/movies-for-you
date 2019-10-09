@@ -310,7 +310,7 @@ public class MainController {
 			System.out.println("in loop");
 			model.put("showsList", showsinList);
 			httpSession.setAttribute("theatreId", theatreID);
-			System.out.println("theatre set as" + theatreID);
+			
 			return "ChoseShowPage";
 
 		} else {
