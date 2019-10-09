@@ -12,20 +12,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 @Entity
 @Table(name="movie_show")
 public class Show {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="show_id")
 	private Integer showId;
-	@Column(name="show_date")
-    private Date show_date;
-	@Column(name="show_timings")
-    private Date show_timings;
+	@Column(name="showDate")
+	@Temporal(TemporalType.DATE)
+    private Date showDate;
+	@Column(name="showTime")
+	@Temporal(TemporalType.TIME)
+    private Date showTime;
 	@Column(name="available_seats")
     private Integer availableSeats;
 	@Column(name="blocked_seats")
-    private Integer blockedSeats;
+    private Integer blockedSeats=20;
+	
+	
 	@ManyToOne
 	@JoinColumn(name = "movie_id")
     private Movie movie;
@@ -42,12 +48,12 @@ public class Show {
 	}
 
 
-	public Show(Integer showId, Date show_date, Date show_timings, Integer availableSeats, Integer blockedSeats,
+	public Show(Integer showId, Date showDate, Date showTime, Integer availableSeats, Integer blockedSeats,
 			Movie movie, Theatre theatre, List<Booking> bookings) {
 		super();
 		this.showId = showId;
-		this.show_date = show_date;
-		this.show_timings = show_timings;
+		this.showDate = showDate;
+		this.showTime = showTime;
 		this.availableSeats = availableSeats;
 		this.blockedSeats = blockedSeats;
 		this.movie = movie;
@@ -66,23 +72,23 @@ public class Show {
 	}
 
 
-	public Date getShow_date() {
-		return show_date;
+	public Date getShowDate() {
+		return showDate;
 	}
 
 
-	public void setShow_date(Date show_date) {
-		this.show_date = show_date;
+	public void setShowDate(Date showDate) {
+		this.showDate = showDate;
 	}
 
 
-	public Date getShow_timings() {
-		return show_timings;
+	public Date getShowTime() {
+		return showTime;
 	}
 
 
-	public void setShow_timings(Date show_timings) {
-		this.show_timings = show_timings;
+	public void setShowTime(Date showTime) {
+		this.showTime = showTime;
 	}
 
 
@@ -134,15 +140,6 @@ public class Show {
 	public void setBookings(List<Booking> bookings) {
 		this.bookings = bookings;
 	}
-
-
-
-	
-	
-
-
-
-	
    
 }
 

@@ -1,8 +1,5 @@
 package com.cg.moviesforyou.dto;
 import javax.persistence.*;
-
-
-import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "admin")
 public class Admin {
@@ -11,13 +8,10 @@ public class Admin {
 	@Column(name = "user_id")
 	private Integer adminId;
 	@Column(name = "username")
-	@NotEmpty(message="Field can't be empty!")
 	private String adminName;
 	@Column(name = "password")
-	@NotEmpty(message="Field can't be empty!")
 	private String adminPassword;
 	@Column(name = "phone_number")
-	@NotEmpty(message="Field can't be empty!")
 	private String contactNumber;
 
 	public Admin() {

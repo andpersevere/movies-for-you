@@ -1,6 +1,7 @@
 package com.cg.moviesforyou.dao;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface CustomerDao {
 	public Date getReleaseDate(Integer movieId);
 	public Integer getAvailableSeats(Integer showSelected);
 	public Boolean updateSeats(Integer showSelected, Integer availableSeats, Integer bookedSeats);
+	public List<Customer> findAll();
+	
 }

@@ -2,6 +2,7 @@ package com.cg.moviesforyou.dao;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,13 +13,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
+import com.cg.moviesforyou.dto.Admin;
 import com.cg.moviesforyou.dto.Booking;
 import com.cg.moviesforyou.dto.Customer;
 import com.cg.moviesforyou.dto.Movie;
@@ -27,10 +27,9 @@ import com.cg.moviesforyou.dto.Theatre;
 import com.cg.moviesforyou.exception.UserException;
 
 @Repository("customerDao")
-@Transactional
 public class CustomerDaoImpl implements CustomerDao {
 
-	@PersistenceContext(type = PersistenceContextType.EXTENDED)
+	@PersistenceContext
 	EntityManager manager;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -52,14 +51,21 @@ public class CustomerDaoImpl implements CustomerDao {
 	}
 
 	public Customer validateCustomerLogin(String userName, String userPass) throws UserException {
-		Query query = manager.createQuery("From Customer where customerName = :first and customerPassword = :second");
+		Query query = manager.createQuery("From Customer where customerName = :first");
 		query.setParameter("first", userName);
-		query.setParameter("second", userPass);
-		List<Customer> customerList = query.getResultList();
-		if (customerList.isEmpty()) {
-			return null;
+		Customer customer;
+		try {
+			customer = (Customer) query.getSingleResult();
+		} catch (Exception e) {
+			
+			throw new UserException();
 		}
-		return customerList.get(0);
+		
+		if (customer != null) {
+			if(customer.getCustomerPassword().compareTo(userPass) == 0)
+				return customer;
+		}
+		return null;
 	}
 
 	public List<Movie> getMovies() {
@@ -70,38 +76,27 @@ public class CustomerDaoImpl implements CustomerDao {
 		return movieList;
 	}
 
-	public List<Theatre> getTheatreByMovieId(Integer movieId) {
-		Movie movie = manager.find(Movie.class, movieId);
-		if (movie != null) {
-			List<Theatre> theatresList = movie.getTheatre();
-			List<String> nameIdList = new ArrayList<String>();
-			theatresList.forEach(theatre -> {
-				nameIdList.add(theatre.getTheatreId() + " " + theatre.getTheatreName());
-			});
-			return theatresList;
-		}
-		return null;
-	}
-	
 	public List<Show> getShows(Integer movieId, Integer theatreId) {
 		Theatre theatre = manager.find(Theatre.class, theatreId);
 		if (theatre != null) {
 			List<Show> showsList = theatre.getShowsList();
-			System.out.println("show list"+showsList);
 			List<Show> selectedShow = new ArrayList<Show>();
 			for(Show showin : showsList) {
 				if(showin.getMovie().getMovieId()==movieId) {
 					selectedShow.add(showin);
 				}
+				
 			}
-			System.out.println("show exists");
+			System.out.println("selected show"+selectedShow);
+			
 			return selectedShow;
 		}
 		else {
 			System.out.println("theatre dn exist");
+			System.out.println("show not exissts");
+			return null;
 		}
-		System.out.println("show not exissts");
-		return null;
+		
 	}
 
 	public BigInteger getUserId(String userName) {
@@ -116,7 +111,8 @@ public class CustomerDaoImpl implements CustomerDao {
 		manager.persist(booking);
 		return true;
 	}
-
+	
+	@Transactional
 	public List<Booking> viewBookings(BigInteger userID) {
 		Customer customer = manager.find(Customer.class, userID);
 		if (customer != null) {
@@ -124,7 +120,7 @@ public class CustomerDaoImpl implements CustomerDao {
 			List<String> bookingIds = new ArrayList<String>();
 			bookingsList.forEach(booking -> {
 				bookingIds.add(booking.getBookingId() + " : "
-						+ sdf1.format(booking.getShow().getShow_timings()) + " : "
+						+ sdf1.format(booking.getShow().getShowTime()) + " : "
 								+ booking.getShow().getTheatre().getTheatreName() + " : "
 								+ booking.getShow().getMovie().getMovieName());
 			});
@@ -132,14 +128,6 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 		return null;
 	}
-	
-	@Transactional
-	public Boolean cancelBooking(BigInteger bookingid) {
-		Booking booking = manager.find(Booking.class, bookingid);
-		booking.setFlag(1);
-		return true;
-	}
-	
 	public BigInteger getBookingId(BigInteger userId) {
 		Customer customer = manager.find(Customer.class, userId);
 		if (customer != null) {
@@ -179,6 +167,39 @@ public class CustomerDaoImpl implements CustomerDao {
 		Show show = manager.find(Show.class, showSelected);
 		show.setAvailableSeats(availableSeats - bookedSeats);
 //		  show.setBookedSeats(bookedSeats);
+		return true;
+	}
+	
+	public List<Theatre> getTheatreByMovieId(Integer movieId) {
+		Movie movie = manager.find(Movie.class, movieId);
+		if (movie != null) {
+			List<Theatre> theatresList = movie.getTheatre();
+			System.out.println("theatres"+theatresList);
+			List<String> nameIdList = new ArrayList<String>();
+			theatresList.forEach(theatre -> {
+				nameIdList.add(theatre.getTheatreId() + " " + theatre.getTheatreName());
+			});
+			return theatresList;
+		}
+		return null;
+	}
+	
+	public List<Customer> findAll() {
+		Query query = manager.createQuery("FROM Customer");
+		List<Customer> customerList = query.getResultList();
+
+		if (customerList.isEmpty()) {
+			System.out.println("No admins in the database.");
+			return null;
+		} else {
+			return customerList;
+		}
+	}
+
+	@Transactional
+	public Boolean cancelBooking(BigInteger bookingid) {
+		Booking booking = manager.find(Booking.class, bookingid);
+		booking.setFlag(1);
 		return true;
 	}
 }

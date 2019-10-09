@@ -18,14 +18,17 @@
 <table border=1>
 
 <tr><td>Show Id</td>
+<td>Show Date</td>
 <td>Show Timings</td>
+<td>Available Seats</td>
 </tr>
 
 <c:forEach var="show" items="${showsList}">
 			<tr>
 				
 				<td>${show.showId}</td>
-				<td>${show.show_timings}</td>
+				<td>${show.showDate}</td>
+				<td>${show.showTime}</td>
 				<td>${show.availableSeats}</td>
 
 			</tr>

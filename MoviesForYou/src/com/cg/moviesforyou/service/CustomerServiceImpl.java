@@ -1,6 +1,7 @@
 package com.cg.moviesforyou.service;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +84,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public Boolean updateSeats(Integer showSelected, Integer seatsAvailable, Integer bookedSeats) {
 		return customerDao.updateSeats(showSelected, seatsAvailable, bookedSeats);
 
+	}
+
+	@Override
+	public List<Customer> findAll() {
+		return customerDao.findAll();
 	}
 
 }

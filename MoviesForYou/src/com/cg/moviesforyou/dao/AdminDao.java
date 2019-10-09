@@ -1,5 +1,6 @@
 package com.cg.moviesforyou.dao;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,6 @@ public interface AdminDao {
 	public Admin remove(Integer adminId);
 	public List<Movie> getMovies();
 	public List<String> getTheatreByMovieId(Integer movieId);
-	Date getReleaseDate(Integer movieID);
+	public Date getReleaseDate(Integer movieID);
 	public Boolean setShowStatus(Integer movieID); 
 }

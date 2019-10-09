@@ -1,5 +1,6 @@
 package com.cg.moviesforyou.dao;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import com.cg.moviesforyou.dto.Admin;
+import com.cg.moviesforyou.dto.Customer;
 import com.cg.moviesforyou.dto.Movie;
 import com.cg.moviesforyou.dto.Show;
 import com.cg.moviesforyou.dto.Theatre;
@@ -99,16 +101,19 @@ public class AdminDaoImpl implements AdminDao {
 	}
 
 	public Admin validateAdminLogin(String userName, String userPass) throws UserException {
-		Query query = manager.createQuery("FROM Admin WHERE adminName = :first AND adminPassword = :second");
+		Query query = manager.createQuery("From Admin where adminName = :first");
 		query.setParameter("first", userName);
-		query.setParameter("second", userPass);
-
-		List<Admin> adminList = query.getResultList();
-
-		if (adminList.isEmpty()) {
-			return null;
+		Admin admin;
+		try {
+			admin = (Admin) query.getSingleResult();
+		} catch (Exception e) {
+			throw new UserException();
 		}
-		return adminList.get(0);
+		if (admin != null) {
+			if(admin.getAdminPassword().equals(userPass))
+				return admin;
+		}
+		return null;
 	}
 
 

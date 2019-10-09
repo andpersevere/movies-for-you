@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import com.cg.moviesforyou.dto.Customer;
 import com.cg.moviesforyou.dto.Movie;
-import com.cg.moviesforyou.dto.Theatre;
 
 @Repository("movieDao")
 public class MovieDaoImpl implements MovieDao {
@@ -24,13 +23,21 @@ public class MovieDaoImpl implements MovieDao {
 
 	@Transactional
 	public Movie save(Movie movie) {
+		Query query = manager.createQuery("FROM Movie WHERE movieName = :first AND language = :second");
+		query.setParameter("first", movie.getMovieName());
+		query.setParameter("second", movie.getLanguage());
+		List<Movie> movieList = query.getResultList();
+		if (movieList.isEmpty()) {
 			manager.persist(movie);
+			movie.setFlag(0);
 			return movie;
+		} else {
+			return null;
 		}
+	}
 
 	public List<Movie> findAll() {
-		Query query = manager.createQuery("FROM Movie where showStatus = :first");
-		query.setParameter("first", 0);
+		Query query = manager.createQuery("FROM Movie");
 		List<Movie> movieList = query.getResultList();
 		if (movieList.isEmpty()) {
 			System.out.println("No movies in the database.");

@@ -4,34 +4,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body> Register
-<table>
-<fo:form action="addCustomerToDatabase"  method="post" modelAttribute="myCustomerForm">
-<tr>
-<td>UserName</td>
-<td><fo:input path="customerName"/></td>
-<td><span><fo:errors path="customerName"></fo:errors></span></td>
-</tr>
-<tr>
-<td> Phone Number</td>
-<td><fo:input path="contactNumber"/></td>
-<td><span><fo:errors path="contactNumber"></fo:errors></span></td>
-</tr>
-<tr>
-<td>Password</td>
-<td><fo:input type="password" path="customerPassword" /></td>
 
-</tr>
-<tr>
-<td>
-<input type="submit" value="Create Account">
-</td>
-</tr>
-</fo:form>
-</table>
+</head>
+
+<body>
+
+			<table class="striped">
+				<fo:form action="addCustomerToDatabase" method="post"
+					modelAttribute="myCustomerForm">
+					<tr>
+						<td>Username</td>
+						<td><fo:input path="customerName" /></td>
+						
+					</tr>
+					<tr>
+						<td>Password</td>
+						<td><fo:input type="password" path="customerPassword" /></td>
+						
+					</tr>
+					<tr>
+						<td>Contact Number</td>
+						<td><fo:input path="contactNumber" /></td>
+					</tr>
+					<tr>
+						<td></td><td><input type="submit" value="Create Account"
+							class="waves-effect waves-light btn-small"></td><td></td>
+					</tr>
+
+				</fo:form>
+			</table>
 
 </body>
 </html>

@@ -8,6 +8,12 @@
 <title>Insert title here</title>
 </head>
 <body>
-Lets book movies!
+<table>
+<a:forEach var="pro" items="${bookingstatus}">
+<tr>
+<td>Booking : ${bookingstatus} : Booking ID : ${bookingId} </td>
+</tr>
+</a:forEach>
+</table>
 </body>
 </html>

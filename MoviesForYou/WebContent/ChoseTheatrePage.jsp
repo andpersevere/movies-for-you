@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <%
-	if (null == session.getAttribute("customerId")) {
+	if (null == session.getAttribute("username")) {
 		response.sendRedirect("LogInPage");
 	} else {
 		
@@ -21,7 +21,7 @@
 <td>Theatre Name</td>
 </tr>
 
-<c:forEach var="theatrein" items="${theatresList}">
+<c:forEach var="theatrein" items="${theatreList}">
 			<tr>
 				
 				<td>${theatrein.theatreId}</td>

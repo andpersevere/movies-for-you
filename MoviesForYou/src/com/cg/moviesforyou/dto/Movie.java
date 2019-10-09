@@ -4,7 +4,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +12,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "movie")
@@ -29,13 +30,15 @@ import javax.persistence.Table;
 		@Column(name="movie_length")
 		private Integer movieLength;
 		@Column(name="movie_release_date")
+		@Temporal(TemporalType.DATE)
 		private Date movieReleaseDate;
 		@Column(name="movie_language")
 		private String language;
 		@Column(name="delete_flag")
 		private Integer flag=0;
-		@Column(name="show_status", columnDefinition = "integer default 0" )
+		@Column(name="show_status")
 		private Integer showStatus=0;
+		
 		@ManyToMany(cascade = CascadeType.MERGE)
 		@JoinTable(joinColumns = @JoinColumn(name = "movie_fk"), inverseJoinColumns = @JoinColumn(name = "theatre_fk"))
 		private List<Theatre> theatre;
@@ -149,14 +152,6 @@ import javax.persistence.Table;
 
 		public void setShowsList(List<Show> showsList) {
 			this.showsList = showsList;
-		}
-
-		@Override
-		public String toString() {
-			return "Movie [movieId=" + movieId + ", movieName=" + movieName + ", genre=" + genre + ", director="
-					+ director + ", movieLength=" + movieLength + ", movieReleaseDate=" + movieReleaseDate
-					+ ", language=" + language + ", flag=" + flag + ", showStatus=" + showStatus + ", theatre="
-					+ theatre + ", showsList=" + showsList + "]";
 		}
 		
 				

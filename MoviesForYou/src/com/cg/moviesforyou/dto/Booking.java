@@ -10,9 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name="booking")
 public class Booking {
@@ -27,6 +24,7 @@ public class Booking {
 	private String payment;
 	@Column(name="delete_flag")
 	private Integer flag=0;
+	
 	@ManyToOne
 	@JoinColumn(name = "show_id")
 	private Show show;

@@ -8,13 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<table>
-<a:forEach var="pro" items="${bookingstatus}">
-<tr>
-<td>Booking : ${bookingstatus}</td>
-</tr>
-</a:forEach>
-</table>
+
 <table border="1">
 	<thead><tr><th>View Booking</th></tr></thead>
 		<tr>

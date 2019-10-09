@@ -1,6 +1,7 @@
 package com.cg.moviesforyou.service;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -26,5 +27,6 @@ public interface CustomerService {
 	public Date getReleaseDate(Integer movieId);
 	public Integer getAvailableSeats(Integer showSelected);
 	public Boolean updateSeats(Integer showSelected, Integer seatsLeft, Integer seatsBooked);
+	public List<Customer> findAll();
 
 }

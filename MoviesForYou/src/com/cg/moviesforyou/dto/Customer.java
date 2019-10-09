@@ -21,6 +21,8 @@ public class Customer {
 	private String customerPassword;
 	@Column(name="phone_number")
 	private String contactNumber;
+	
+	
 	@OneToMany(mappedBy = "customer")
 	private List<Booking> bookings;
 	
