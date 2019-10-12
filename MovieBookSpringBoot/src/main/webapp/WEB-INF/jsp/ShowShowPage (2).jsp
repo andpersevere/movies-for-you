@@ -10,7 +10,7 @@
 </head>
 <body>
 	<table border="1">
-	<thead><tr><th>Show Show</th></tr></thead>
+	<thead><tr><th>Display Shows</th></tr></thead>
 		<tr>
 			<th>Show Id</th>
 			<th>Available Seats</th>
@@ -23,8 +23,8 @@
 			<tr>
 				<td>${show.showId}</td>
 				<td>${show.availableSeats}</td>
-				<td>${show.show_date}</td>
-				<td>${show.show_timings}</td>
+				<td>${show.showDate}</td>
+				<td>${show.showTime}</td>
 				<td>${show.movie.movieName}</td>
 				<td>${show.theatre.theatreName}</td>
 				<%-- <td>${show.movieList}</td>

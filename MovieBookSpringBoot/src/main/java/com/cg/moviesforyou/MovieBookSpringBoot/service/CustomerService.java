@@ -16,17 +16,7 @@ public interface CustomerService {
 
 	public Customer addCustomer(Customer customer) throws UserException;
 	public Customer validateCustomerLogin(String userName, String userPass) throws UserException;
-	public List<Movie> getMovies();
-	public List<Theatre> getTheatreByMovieId(Integer movieId);
-	public List<Show> getShows(Integer movieId, Integer theatreSelected);
-	public BigInteger getUserId(String userName);
-	public Boolean addBooking(Booking booking) throws Exception;
-	public List<Booking> viewBookings(BigInteger userID);
-	public Boolean cancelBooking(BigInteger booking_id);
-	public BigInteger getBookingId(BigInteger userId);
-	public Date getReleaseDate(Integer movieId);
-	public Integer getAvailableSeats(Integer showSelected);
-	public Boolean updateSeats(Integer showSelected, Integer seatsLeft, Integer seatsBooked);
+	public BigInteger getUserId(String userName);	
 	public List<Customer> findAll();
 
 }

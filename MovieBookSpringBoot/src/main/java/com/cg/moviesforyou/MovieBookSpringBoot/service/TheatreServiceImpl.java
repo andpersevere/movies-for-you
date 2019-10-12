@@ -7,30 +7,28 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.moviesforyou.MovieBookSpringBoot.dao.TheatreDao;
 import com.cg.moviesforyou.MovieBookSpringBoot.dto.Theatre;
+import com.cg.moviesforyou.MovieBookSpringBoot.repository.TheatreRepository;
 
 @Service("theatreService")
 @Transactional
 public class TheatreServiceImpl implements TheatreService {
 	
 	@Autowired
-	TheatreDao theatreDao;
+	TheatreRepository theatreRepository;
 
-	public Theatre save(Theatre theatre) {
-		return theatreDao.save(theatre);
+	public Theatre addTheatre(Theatre theatre) {
+		return theatreRepository.save(theatre);
 	}
 
 	public List<Theatre> findAll() {
-		return theatreDao.findAll();
+		return theatreRepository.findAll();
 	}
 
-	public Theatre find(Integer theatreId) {
-		return theatreDao.find(theatreId);
+	public Theatre findTheatre(Integer theatreId) {
+		return theatreRepository.findById(theatreId).get();
 	}
 
-	public Theatre remove(Integer theatreId) {
-		return theatreDao.remove(theatreId);
-	}
+
 
 }

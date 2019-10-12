@@ -35,7 +35,8 @@ public class MainController {
 	MovieService movieService;
 	@Autowired
 	CustomerService customerService;
-
+	@Autowired
+	BookingService bookingService;
 	@Autowired
 	HttpSession httpSession;
 
@@ -72,7 +73,7 @@ public class MainController {
 
 	@RequestMapping(value = "/addTheatreToDatabase", method = RequestMethod.POST) // Page for adding theatre to database
 	public ModelAndView addTheatre(@ModelAttribute("myTheatreForm") Theatre theatre, BindingResult result) {
-		theatreService.save(theatre);
+		theatreService.addTheatre(theatre);
 		List<Theatre> myTheatreList = theatreService.findAll();
 		httpSession.setAttribute("theatreDataItem", myTheatreList);
 		return new ModelAndView("ShowTheatrePage");
@@ -115,8 +116,6 @@ public class MainController {
 	public ModelAndView addMovie(@ModelAttribute("myMovieForm") Movie movie,
 			@RequestParam("movieReleaseDate_id") String movieReleaseDate, @RequestParam("theatre_id") String theatres,
 			BindingResult result) {
-		System.out.println(theatres);
-
 		try {
 			movie.setMovieReleaseDate(new SimpleDateFormat("yyyy-MM-dd").parse(movieReleaseDate));
 		} catch (ParseException e1) {
@@ -125,11 +124,10 @@ public class MainController {
 		int[] arr = Arrays.stream(theatres.split(",")).mapToInt(Integer::parseInt).toArray();
 		List<Theatre> theatreList = new ArrayList<>();
 		for (int i = 0; i < arr.length; i++) {
-			theatreList.add(theatreService.find(arr[i]));
+			theatreList.add(theatreService.findTheatre(arr[i]));
 		}
-		System.out.println("Theatre list for movie"+theatreList);
 		movie.setTheatre(theatreList);
-		movieService.save(movie);
+		movieService.addMovie(movie);
 		List<Movie> myMovieList = movieService.findAll();
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		return new ModelAndView("ShowMoviePage");
@@ -177,20 +175,14 @@ public class MainController {
 		movie.setMovieId(movieId);
 		show.setTheatre(theater);
 		show.setMovie(movie);
-		showService.save(show);
-//		adminService.addShowToTheatre(show.getShowId(), theatreService.find(Integer.parseInt(theatre)).getTheatreId());
-//		adminService.addMovieToTheatre(movieService.find(Integer.parseInt(movie)).getMovieId(), show.getShowId(),
-//				theatreService.find(Integer.parseInt(theatre)).getTheatreId());
-
+		showService.addShow(show);
 		List<Show> myShowList = showService.findAll();
 		return new ModelAndView("ShowShowPage", "showData", myShowList);
 	}
 
 	@RequestMapping(value = "/showShowPage", method = RequestMethod.GET) // Page for viewing shows
 	public String showShowPage() {
-
 		List<Show> myShowList = showService.findAll();
-
 		httpSession.setAttribute("showData", myShowList);
 		return "ShowShowPage";
 	}
@@ -216,10 +208,7 @@ public class MainController {
 			System.out.println("Error in binding result. ");
 		} else {
 			try {
-				System.out.println("Here");
 				customerService.addCustomer(customer);
-				System.out.println("Here");
-
 			} catch (UserException e) {
 				e.printStackTrace();
 			}
@@ -265,7 +254,7 @@ public class MainController {
 
 	@RequestMapping(value = "/BookingPage", method = RequestMethod.GET) // Page for booking movie tickets
 	public String addBookingPage(Map<String, Object> model) {
-		model.put("movieList", customerService.getMovies());
+		model.put("movieList", movieService.findAll());
 		return "ChoseMoviePage";
 	}
 
@@ -273,13 +262,11 @@ public class MainController {
 	public String chooseTheatreRequest(@RequestParam("movieId") String movieId, Map<String, Object> model) {
 		Integer movieID = Integer.parseInt(movieId);
 		System.out.println("movie id " + movieID);
-		if (movieService.find(movieID) == null) {
+		if (movieService.findMovie(movieID) == null) {
 			return "ChoseMoviePage";
 		} else {
-
 			List<Theatre> theatreList;
-
-			theatreList = customerService.getTheatreByMovieId(movieID);
+			theatreList = movieService.getTheatreByMovieId(movieID);
 			if (theatreList.size() > 0) {
 				System.out.println("in loop");
 				model.put("theatreList", theatreList);
@@ -303,7 +290,7 @@ public class MainController {
 		Integer movieid = Integer.parseInt(httpSession.getAttribute("movieId").toString());
 		System.out.println("movie id: " + movieid);
 		List<Show> showsinList;
-		showsinList = customerService.getShows(movieid, theatreID);
+		showsinList = showService.getShows(movieid, theatreID);
 
 		System.out.println(showsinList);
 		if (showsinList.size() > 0) {
@@ -327,9 +314,8 @@ public class MainController {
 			@RequestParam("seatsBooked") Integer seatsBooked, Map<String, Object> model) throws Exception {
 
 		Booking booking = new Booking();
-//		LocalDateTime dateTime;
 		booking.setFlag(0);
-		Integer available_seats = customerService.getAvailableSeats(Integer.parseInt(showId));
+		Integer available_seats = showService.getAvailableSeats(Integer.parseInt(showId));
 		if (seatsBooked > available_seats) {
 
 			return new ModelAndView("ChoseShowPage", "error", "too many booked seats");
@@ -343,15 +329,21 @@ public class MainController {
 			booking.setCustomer(customer);
 			booking.setTotalCost(200 * seatsBooked);
 			booking.setPayment("Done");
-			Boolean bookingStatus = customerService.addBooking(booking);
+			Booking book=bookingService.addBooking(booking);
+			Boolean bookingStatus;
+			if(book==null) {
+				bookingStatus=false;
+			}
+			else {
+				bookingStatus=true;
+			}
 			if (bookingStatus == true) {
-				BigInteger bookingId = customerService
-						.getBookingId((BigInteger) (httpSession.getAttribute("customerId")));
+				BigInteger bookingId = bookingService.getBookingId((BigInteger) (httpSession.getAttribute("customerId")));
 				String bookingstatus = "Succesfull! ";
 				model.put("bookingId", bookingId);
 				httpSession.setAttribute("bookingId", bookingId);
 				model.put("bookingId", bookingId);
-				customerService.updateSeats(Integer.parseInt(showId), available_seats, seatsBooked);
+				showService.updateSeats(Integer.parseInt(showId), available_seats, seatsBooked);
 				return new ModelAndView("BookingPage", "bookingstatus", bookingstatus);
 			} else {
 				String bookingstatus = "Unsuccessfull!";
@@ -362,21 +354,21 @@ public class MainController {
 
 	@RequestMapping(value = "/ViewBookingPage", method = RequestMethod.GET) // Page for viewing booking
 	public ModelAndView getAllBookings() {
-		List<Booking> bookings = customerService.viewBookings((BigInteger) (httpSession.getAttribute("customerId")));
+		List<Booking> bookings = bookingService.viewBookings((BigInteger) (httpSession.getAttribute("customerId")));
 		return new ModelAndView("ViewBookingPage", "data", bookings);
 	}
 
 	@RequestMapping(value = "/CancelBooking", method = RequestMethod.GET) // Page for cancelling booking
 	public ModelAndView cancelBookingPage(Map<String, Object> model) {
 		System.out.println("in cancel get");
-		List<Booking> bookings = customerService.viewBookings((BigInteger) httpSession.getAttribute("bookingId"));
+		List<Booking> bookings = bookingService.viewBookings((BigInteger) httpSession.getAttribute("customerId"));
 		model.put("bookings", bookings);
 		return new ModelAndView("CancelBooking", "data", bookings);
 	}
 
 	@RequestMapping(value = "/CancelBookingSubmit", method = RequestMethod.POST)
 	public String cancelBooking(@RequestParam("bookingId") String bookingId, Map<String, Object> model) {
-		customerService.cancelBooking((BigInteger) httpSession.getAttribute("bookingId"));
+		bookingService.cancelBooking((BigInteger) httpSession.getAttribute("bookingId"));
 
 		return "CustomerPage";
 

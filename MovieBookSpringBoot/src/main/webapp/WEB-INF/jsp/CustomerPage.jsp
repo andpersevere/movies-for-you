@@ -37,6 +37,8 @@ footer {
 			<ul id="nav-mobile" class="left hide-on-med-and-down">
 			<li><a href=""></a></li>
 				<li><a href="BookingPage">Book Your Movie</a></li>
+				<li><a href="ViewBookingPage">View Bookings</a></li>
+				<li><a href="CancelBooking">Cancel Booking</a></li>
 				<li><a href="logOutPage">Log Out</a></li>
 			</ul>
 		</div>
