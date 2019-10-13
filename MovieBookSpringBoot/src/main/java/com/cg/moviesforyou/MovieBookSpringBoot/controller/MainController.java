@@ -287,7 +287,7 @@ public class MainController {
 				model.put("theatreList", theatreList);
 				System.out.println(theatreList.size());
 				httpSession.setAttribute("movieId", movieID);
-				System.out.println("session value set");
+			
 				return "ChoseTheatrePage";
 
 			} else {
