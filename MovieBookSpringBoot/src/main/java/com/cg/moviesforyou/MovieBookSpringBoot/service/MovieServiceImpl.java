@@ -35,4 +35,13 @@ public class MovieServiceImpl implements MovieService {
 		return movieRepository.findById(movieID).get().getTheatre();
 	}
 
+	@Override
+	@Transactional
+	public Boolean removeMovie(Integer movieid) {
+		// TODO Auto-generated method stub
+		Movie movies=movieRepository.findById(movieid).get();
+		movies.setShowStatus(1);
+		return true;
+	}
+
 }

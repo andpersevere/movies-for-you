@@ -22,9 +22,6 @@
 			<tr>
 				<td>${booking.bookingId}</td>
 				<td>${booking.seatsBooked}</td>
-	
-			
-				
 				
 				<%-- <td>${movie.movieList}</td>
 				<td>${movie.moviesList}</td> --%>

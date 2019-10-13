@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
 	public Boolean cancelBooking(BigInteger bookingId) {
 		// TODO Auto-generated method stub
 		Booking booking=bookingRepository.findById(bookingId).get();
-		booking.setFlag(0);
+		booking.setFlag(1);
 		return true;
 	}
 }

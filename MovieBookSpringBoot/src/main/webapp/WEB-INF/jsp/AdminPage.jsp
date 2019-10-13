@@ -38,7 +38,8 @@ footer{
 				<li><a href="showCustomerPage">Show Customers</a></li>
 				<li><a href="showMoviePage">Show Movies</a></li>
 				<li><a href="showTheatrePage">Show Theatres</a></li>
-				<li><a href="showShowPage">Show Shows</a></li>
+				<li><a href="showShowPage">Display Shows</a></li>
+				<li><a href="RemoveMoviePage">Remove Movie</a></li>
 				<li><a href="logOutPage">Log Out</a></li>
 			</ul>
 		</div>

@@ -10,5 +10,6 @@ public interface MovieService {
 	public List<Movie> findAll();
 	public Movie findMovie(Integer movieId);
 	public List<Theatre> getTheatreByMovieId(Integer movieID);
+	public Boolean removeMovie(Integer movieID);
 	
 }

@@ -139,6 +139,21 @@ public class MainController {
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		return "ShowMoviePage";
 	}
+	@RequestMapping(value = "/RemoveMoviePage", method = RequestMethod.GET) // Page for removing movie
+	public String removeMoviePage(Map<String, Object> model) {
+		List<Movie> myMovieList = movieService.findAll();
+		httpSession.setAttribute("movieList", myMovieList);
+		return "RemoveMoviePage";
+	}
+
+	@RequestMapping(value = "/removeMovieFromDatabase", method = RequestMethod.POST) 
+	public ModelAndView removeMovie(@RequestParam("movieId") String movieID) {
+		Integer movieId = Integer.parseInt(movieID);
+		movieService.removeMovie(movieId);
+		List<Movie> myMovieList = movieService.findAll();
+		httpSession.setAttribute("movieDataItem", myMovieList);
+		return new ModelAndView("ShowMoviePage","message","Movie Removed Successfully");
+	}
 
 	@RequestMapping(value = "/addShowPage", method = RequestMethod.GET) // Page for adding show
 	public String addShowPage(@ModelAttribute("myShowForm") Show show) {
@@ -368,8 +383,8 @@ public class MainController {
 
 	@RequestMapping(value = "/CancelBookingSubmit", method = RequestMethod.POST)
 	public String cancelBooking(@RequestParam("bookingId") String bookingId, Map<String, Object> model) {
-		bookingService.cancelBooking((BigInteger) httpSession.getAttribute("bookingId"));
-
+		
+		bookingService.cancelBooking(new BigInteger(bookingId));
 		return "CustomerPage";
 
 	}

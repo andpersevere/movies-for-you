@@ -32,6 +32,7 @@ footer {
 </head>
 
 <body>
+"${message}"
 	<div class="container">
 		<div class="row">
 			<div class="card col s6 offset-s6 center">

@@ -21,7 +21,7 @@ We allow you to cancel your booking! WE'LL THINK ABOUT REFUND!!
 		<table>
 			<tr>
 				<td>Booking Id:</td>
-				<td><input name="bookingId" /></td>
+				<td><input type="text" name="bookingId" /></td>
 			</tr>
 				<tr>
 				<td><input type="submit" value="Cancel Booking"></input></td>
