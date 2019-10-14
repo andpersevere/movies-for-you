@@ -376,7 +376,6 @@ public class MainController {
 
 	@RequestMapping(value = "/CancelBooking", method = RequestMethod.GET) // Page for cancelling booking
 	public ModelAndView cancelBookingPage(Map<String, Object> model) {
-		System.out.println("in cancel get");
 		List<Booking> bookings = bookingService.viewBookings((BigInteger) httpSession.getAttribute("customerId"));
 		model.put("bookings", bookings);
 		return new ModelAndView("CancelBooking", "data", bookings);
