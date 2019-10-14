@@ -11,8 +11,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+@ComponentScan
 @Controller
 public class MainController {
 	
@@ -73,12 +76,30 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/addTheatreToDatabase", method = RequestMethod.POST) // Page for adding theatre to database
-	public ModelAndView addTheatre(@ModelAttribute("myTheatreForm") Theatre theatre, BindingResult result) {
+	public ModelAndView addTheatre(@Valid @ModelAttribute("myTheatreForm") Theatre theatre, BindingResult result,Map<String, Object> model) {
+//		logger.info("Checking Center inputs.");
+		if (result.hasErrors()) {
+			List<String> myCityList = new ArrayList<String>();
+			myCityList.add("Mumbai");
+			myCityList.add("Bangalore");
+			myCityList.add("Pune");
+			myCityList.add("Hyderabad");
+			myCityList.add("Chennai");
+			myCityList.add("Kolkata");
+			myCityList.add("Chandigarh");
+			model.put("cityDataItem", myCityList);
+			// If inputs are not according to validations, will ask to try again.
+//			logger.info("ImProper Details, returning back to Add Theatre");
+//			model.put("error", "Please enter details according to the given messages");
+			return new ModelAndView("AddTheatrePage","error","Please enter details according to the given messages");
+		} else {
+//		logger.info("Proper Center Details Added, Returning to AdminHome Page. ");
 		theatreService.addTheatre(theatre);
-		List<Theatre> myTheatreList = theatreService.findAll();
+		List<Theatre> myTheatreList = theatreService.findAll(); 
 		httpSession.setAttribute("theatreDataItem", myTheatreList);
-		return new ModelAndView("ShowTheatrePage");
+		return new ModelAndView("ShowTheatrePage","message","New Theatre with details added successfully");
 	}
+}
 
 	@RequestMapping(value = "/showTheatrePage", method = RequestMethod.GET) // Page for viewing theatres
 	public String showTheatrePage(ModelMap model) {
@@ -114,7 +135,7 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/addMovieToDatabase", method = RequestMethod.POST) // Page for adding movie to database
-	public ModelAndView addMovie(@ModelAttribute("myMovieForm") Movie movie,
+	public ModelAndView addMovie(@Valid @ModelAttribute("myMovieForm") Movie movie,
 			@RequestParam("movieReleaseDate_id") String movieReleaseDate, @RequestParam("theatre_id") String theatres,
 			BindingResult result) {
 		try {
@@ -167,7 +188,7 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/addShowToDatabase", method = RequestMethod.POST) // Page for adding show to database
-	public ModelAndView addShow(@ModelAttribute("myShowForm") Show show, @RequestParam("movie_id") String movie_id,
+	public ModelAndView addShow(@Valid @ModelAttribute("myShowForm") Show show, @RequestParam("movie_id") String movie_id,
 			@RequestParam("showDate_id") String showDate, @RequestParam("showTime_id") String showTime,
 			@RequestParam("theatre_id") String theatre_id, BindingResult result) {
 		System.out.println(movie_id);
@@ -217,9 +238,8 @@ public class MainController {
 		return "SignUpPage";
 	}
 
-	@RequestMapping(value = "/addCustomerToDatabase", method = RequestMethod.POST) // Page for adding customer to
-																					// database
-	public ModelAndView addCustomer(@ModelAttribute("myCustomerForm") Customer customer, BindingResult result) {
+	@RequestMapping(value = "/addCustomerToDatabase", method = RequestMethod.POST) // Page to add customer entry
+	public ModelAndView addCustomer(@Valid @ModelAttribute("myCustomerForm") Customer customer, BindingResult result) {
 		if (result.hasErrors()) {
 			System.out.println("Error in binding result. ");
 		} else {
@@ -326,7 +346,7 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/choseShowSubmit", method = RequestMethod.POST)
-	public ModelAndView addBookingToDatabase(@RequestParam("showId") String showId,
+	public ModelAndView addBookingToDatabase(@Valid @RequestParam("showId") String showId,
 			@RequestParam("seatsBooked") Integer seatsBooked, Map<String, Object> model) throws Exception {
 
 		Booking booking = new Booking();

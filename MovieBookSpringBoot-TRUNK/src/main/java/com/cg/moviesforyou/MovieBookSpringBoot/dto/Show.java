@@ -14,20 +14,33 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 @Entity
 @Table(name="movie_show")
 public class Show {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="show_id")
 	private Integer showId;
+	
 	@Column(name="showDate")
 	@Temporal(TemporalType.DATE)
+	@FutureOrPresent(message="Can not be in past!")
     private Date showDate;
+	
+	@Future
+	@NotNull
 	@Column(name="showTime")
 	@Temporal(TemporalType.TIME)
     private Date showTime;
+	
+	@NotNull
+	@Pattern(regexp="^[0-9]+$",message = "Please enter available seats in digits")
 	@Column(name="available_seats")
     private Integer availableSeats;
+	
 	@Column(name="blocked_seats")
     private Integer blockedSeats=20;
 	

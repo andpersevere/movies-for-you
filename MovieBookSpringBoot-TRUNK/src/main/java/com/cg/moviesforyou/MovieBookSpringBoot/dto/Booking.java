@@ -10,18 +10,28 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name="booking")
 public class Booking {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="booking_id")
 	private BigInteger bookingId;
+	
+	@SuppressWarnings("deprecation")
+	@NotEmpty(message="Please enter the required seats")
+	@Pattern(regexp="^[0-9]+$",message = "Please enter required seats in digits")
 	@Column(name="seats_booked")
 	private Integer seatsBooked;
+	
 	@Column(name="total_cost")
 	private Integer totalCost;
+	
 	@Column(name="payment")
 	private String payment;
+	
 	@Column(name="delete_flag")
 	private Integer flag=0;
 	

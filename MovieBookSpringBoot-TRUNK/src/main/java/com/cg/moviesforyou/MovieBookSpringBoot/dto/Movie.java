@@ -14,6 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "movie")
@@ -21,21 +26,36 @@ import javax.persistence.TemporalType;
 		@Id @GeneratedValue(strategy = GenerationType.AUTO)
 		@Column(name="movie_id")
 		private Integer movieId;
+		
+		@NotEmpty(message = "Can not be empty!")
 		@Column(name="movie_name")
 		private String movieName;
+		
+		@NotEmpty(message = "Can not be empty!")
 		@Column(name="movie_genre")
 		private String genre;
+		
+		@NotEmpty(message = "Can not be empty!")
 		@Column(name="movie_director")
 		private String director;
+		
+		@Pattern(regexp = "^[0-9]+$", message = "Must contain only digits")
 		@Column(name="movie_length")
 		private Integer movieLength;
+		
+		@NonNull
+		@Future
 		@Column(name="movie_release_date")
 		@Temporal(TemporalType.DATE)
 		private Date movieReleaseDate;
+		
+		@NonNull
 		@Column(name="movie_language")
 		private String language;
+		
 		@Column(name="delete_flag")
 		private Integer flag=0;
+		
 		@Column(name="show_status")
 		private Integer showStatus=0;
 		

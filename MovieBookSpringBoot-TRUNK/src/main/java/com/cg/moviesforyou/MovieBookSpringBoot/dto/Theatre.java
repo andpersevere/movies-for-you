@@ -11,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "theatre")
@@ -19,10 +23,16 @@ public class Theatre {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "theatre_id")
 	private Integer theatreId;
+	
+	@NotNull
 	@Column(name = "theatre_name")
 	private String theatreName;
+	
+	
 	@Column(name = "theatre_city")
 	private String cityName;
+	
+	@NotNull
 	@Column(name = "city_pincode")
 	private Integer cityPincode;
 	

@@ -1,5 +1,7 @@
 package com.cg.moviesforyou.MovieBookSpringBoot.dto;
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 @Entity
 @Table(name = "admin")
 public class Admin {
@@ -7,11 +9,18 @@ public class Admin {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id")
 	private Integer adminId;
+	
 	@Column(name = "username")
+	@Pattern(regexp = "^[^\\d\\s]+$", message = "Should not have spaces and digits")
 	private String adminName;
+	
 	@Column(name = "password")
+	@Size(min = 8, message = "Passwould length should be greater than or equal to 8 characters")
+	@Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20})", message = "Password must have an uppercase, a lower case, a number and a special character")
 	private String adminPassword;
+	
 	@Column(name = "phone_number")
+	@Size(min = 10, max = 10, message = "phone number should be 10 digits")
 	private String contactNumber;
 
 	public Admin() {

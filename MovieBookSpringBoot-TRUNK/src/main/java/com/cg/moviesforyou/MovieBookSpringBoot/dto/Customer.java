@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -15,10 +17,17 @@ public class Customer {
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="user_id")
 	private BigInteger customerId;
+	
+	@Pattern(regexp = "^[^\\d\\s]+$", message = "Should not have spaces and digits")
 	@Column(name="username")
 	private String customerName;
+	
+	@Size(min = 8, message = "Passwould length should be greater than or equal to 8 characters")
+	@Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20})", message = "Password must have an uppercase, a lower case, a number and a special character")
 	@Column(name="password")
 	private String customerPassword;
+	
+	@Size(min = 10, max = 10, message = "phone number should be 10 digits")
 	@Column(name="phone_number")
 	private String contactNumber;
 	
