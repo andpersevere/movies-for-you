@@ -39,7 +39,7 @@ public class ShowServiceImpl implements ShowService {
 					&& showsList.get(i).getTheatre().getTheatreId() == theatreID) {
 				System.out.println("show found");
 				selectedShows.add(showsList.get(i));
-				System.out.println("Show added");
+				
 			}
 		}
 		return selectedShows;

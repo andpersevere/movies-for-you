@@ -1,5 +1,4 @@
-package com.cg.moviesforyou.MovieBookSpringBoot.controller; //Controller class
-
+package com.cg.moviesforyou.MovieBookSpringBoot.controller; 
 import com.cg.moviesforyou.MovieBookSpringBoot.dto.*;
 import com.cg.moviesforyou.MovieBookSpringBoot.exception.UserException;
 import com.cg.moviesforyou.MovieBookSpringBoot.service.*;
@@ -13,6 +12,8 @@ import java.util.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 @ComponentScan
 @Controller
 public class MainController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	@Autowired
 	TheatreService theatreService;
@@ -47,22 +50,26 @@ public class MainController {
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String homePage() {
+		logger.info("Back at Homepage...");
 		return "HomePage";
 	}
 
 	@RequestMapping(value = "/logInPage", method = RequestMethod.GET) // Login Page for customer and admin
 	public String logInPage() {
+		logger.info("In login Page...");
 		return "LogInPage";
 	}
 
 	@RequestMapping(value = "/logOutPage", method = RequestMethod.GET) // Logout
 	public String logout() {
+		logger.info("Logging out...");
 		httpSession.setAttribute("username", null);
 		return "HomePage";
 	}
 
 	@RequestMapping(value = "/addTheatrePage", method = RequestMethod.GET) // Page for adding theatre
 	public String addTheatrePage(@ModelAttribute("myTheatreForm") Theatre theatre, Map<String, Object> model) {
+		logger.info("passing city list to add theatre....");
 		List<String> myCityList = new ArrayList<String>();
 		myCityList.add("Mumbai");
 		myCityList.add("Bangalore");
@@ -77,7 +84,7 @@ public class MainController {
 
 	@RequestMapping(value = "/addTheatreToDatabase", method = RequestMethod.POST) // Page for adding theatre to database
 	public ModelAndView addTheatre(@Valid @ModelAttribute("myTheatreForm") Theatre theatre, BindingResult result,Map<String, Object> model) {
-//		logger.info("Checking Center inputs.");
+		logger.info("Checking theatre details entered.....");
 		if (result.hasErrors()) {
 			List<String> myCityList = new ArrayList<String>();
 			myCityList.add("Mumbai");
@@ -88,13 +95,15 @@ public class MainController {
 			myCityList.add("Kolkata");
 			myCityList.add("Chandigarh");
 			model.put("cityDataItem", myCityList);
+			logger.error("Invalid theatre Details entered...");
 			// If inputs are not according to validations, will ask to try again.
 //			logger.info("ImProper Details, returning back to Add Theatre");
 //			model.put("error", "Please enter details according to the given messages");
 			return new ModelAndView("AddTheatrePage","error","Please enter details according to the given messages");
 		} else {
-//		logger.info("Proper Center Details Added, Returning to AdminHome Page. ");
+		
 		theatreService.addTheatre(theatre);
+		logger.info("Theatre details entered correctly...");
 		List<Theatre> myTheatreList = theatreService.findAll(); 
 		httpSession.setAttribute("theatreDataItem", myTheatreList);
 		return new ModelAndView("ShowTheatrePage","message","New Theatre with details added successfully");
@@ -103,6 +112,7 @@ public class MainController {
 
 	@RequestMapping(value = "/showTheatrePage", method = RequestMethod.GET) // Page for viewing theatres
 	public String showTheatrePage(ModelMap model) {
+		logger.info("Displaying shows...");
 		List<Theatre> myTheatreList = theatreService.findAll();
 		httpSession.setAttribute("theatreDataItem", myTheatreList);
 		return "ShowTheatrePage";
@@ -113,7 +123,7 @@ public class MainController {
 
 		List<String> myLanguageList = new ArrayList<String>();
 		List<String> myGenreList = new ArrayList<String>();
-
+		logger.info("sendings genres to enter movie...");
 		myGenreList.add("Sci-Fi");
 		myGenreList.add("Drama");
 		myGenreList.add("Thriller");
@@ -150,6 +160,7 @@ public class MainController {
 		}
 		movie.setTheatre(theatreList);
 		movieService.addMovie(movie);
+		logger.info("movie added...");
 		List<Movie> myMovieList = movieService.findAll();
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		return new ModelAndView("ShowMoviePage");
@@ -157,6 +168,7 @@ public class MainController {
 
 	@RequestMapping(value = "/showMoviePage", method = RequestMethod.GET) // Page for viewing movies
 	public String showMoviePage() {
+		logger.info("displaying shows...");
 		List<Movie> myMovieList = movieService.findAll();
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		return "ShowMoviePage";
@@ -164,6 +176,7 @@ public class MainController {
 	@RequestMapping(value = "/RemoveMoviePage", method = RequestMethod.GET) // Page for removing movie
 	public String removeMoviePage(Map<String, Object> model) {
 		List<Movie> myMovieList = movieService.findAll();
+		logger.info("removing movie...");
 		httpSession.setAttribute("movieList", myMovieList);
 		return "RemoveMoviePage";
 	}
@@ -173,6 +186,7 @@ public class MainController {
 		Integer movieId = Integer.parseInt(movieID);
 		movieService.removeMovie(movieId);
 		List<Movie> myMovieList = movieService.findAll();
+		logger.info("removing movie from database...");
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		return new ModelAndView("ShowMoviePage","message","Movie Removed Successfully");
 	}
@@ -182,6 +196,7 @@ public class MainController {
 
 		List<Movie> myMovieList = movieService.findAll();
 		List<Theatre> myTheatreList = theatreService.findAll();
+		logger.info("Displaying shows...");
 		httpSession.setAttribute("movieDataItem", myMovieList);
 		httpSession.setAttribute("theatreDataItem", myTheatreList);
 		return "AddShowPage";
@@ -193,6 +208,7 @@ public class MainController {
 			@RequestParam("theatre_id") String theatre_id, BindingResult result) {
 		System.out.println(movie_id);
 		System.out.println(theatre_id);
+		logger.info("validating show details entered...");
 		Integer theatreID = Integer.parseInt(theatre_id);
 		Integer movieId = Integer.parseInt(movie_id);
 		try {
@@ -213,6 +229,7 @@ public class MainController {
 		show.setTheatre(theater);
 		show.setMovie(movie);
 		showService.addShow(show);
+		logger.info("adding show...");
 		List<Show> myShowList = showService.findAll();
 		return new ModelAndView("ShowShowPage", "showData", myShowList);
 	}
@@ -220,6 +237,7 @@ public class MainController {
 	@RequestMapping(value = "/showShowPage", method = RequestMethod.GET) // Page for viewing shows
 	public String showShowPage() {
 		List<Show> myShowList = showService.findAll();
+		logger.info("displaying shows...");
 		httpSession.setAttribute("showData", myShowList);
 		return "ShowShowPage";
 	}
@@ -229,6 +247,7 @@ public class MainController {
 	@RequestMapping(value = "/showCustomerPage", method = RequestMethod.GET) // Page for showing customers
 	public String showCustomerPage(ModelMap model) {
 		List<Customer> myCustomerList = customerService.findAll();
+		logger.info("displaying customers...");
 		model.addAttribute("customerData", myCustomerList);
 		return "ShowCustomerPage";
 	}
@@ -241,10 +260,12 @@ public class MainController {
 	@RequestMapping(value = "/addCustomerToDatabase", method = RequestMethod.POST) // Page to add customer entry
 	public ModelAndView addCustomer(@Valid @ModelAttribute("myCustomerForm") Customer customer, BindingResult result) {
 		if (result.hasErrors()) {
+			logger.error("customer could not be added...");
 			System.out.println("Error in binding result. ");
 		} else {
 			try {
 				customerService.addCustomer(customer);
+				logger.info("added customer...");
 			} catch (UserException e) {
 				e.printStackTrace();
 			}
@@ -258,6 +279,7 @@ public class MainController {
 		Customer customer = null;
 		Admin admin = null;
 		try {
+			logger.info("validating customer login...");
 			customer = customerService.validateCustomerLogin(username, password);
 			BigInteger userId=customerService.getUserId(username);
 			httpSession.setAttribute("customerId", userId);
@@ -271,10 +293,12 @@ public class MainController {
 			
 		}
 		if (admin != null) {
+			logger.info("admin logged in...");
 			httpSession.setAttribute("adminData", admin);
 			httpSession.setAttribute("username", admin.getAdminName());
 			return new ModelAndView("AdminPage");
 		} else if (customer != null) {
+			logger.info("customer logged in...");
 			httpSession.setAttribute("customerData", customer);
 			httpSession.setAttribute("username", customer.getCustomerName());
 			return new ModelAndView("CustomerPage");
@@ -285,12 +309,14 @@ public class MainController {
 
 	@RequestMapping(value = "/customerPage", method = RequestMethod.GET) // Customer Home Page
 	public String customerPage() {
+		logger.info("in customer page...");
 		return "CustomerPage";
 	}
 
 	@RequestMapping(value = "/BookingPage", method = RequestMethod.GET) // Page for booking movie tickets
 	public String addBookingPage(Map<String, Object> model) {
 		model.put("movieList", movieService.findAll());
+		logger.info("customer trying to book...");
 		return "ChoseMoviePage";
 	}
 
@@ -301,6 +327,7 @@ public class MainController {
 		if (movieService.findMovie(movieID) == null) {
 			return "ChoseMoviePage";
 		} else {
+			logger.info("customer chose a movie...");
 			List<Theatre> theatreList;
 			theatreList = movieService.getTheatreByMovieId(movieID);
 			if (theatreList.size() > 0) {
@@ -330,6 +357,7 @@ public class MainController {
 
 		System.out.println(showsinList);
 		if (showsinList.size() > 0) {
+			logger.info("customer selected theatre...");
 			System.out.println("in loop");
 			model.put("showsList", showsinList);
 			httpSession.setAttribute("theatreId", theatreID);
@@ -337,6 +365,7 @@ public class MainController {
 			return "ChoseShowPage";
 
 		} else {
+			logger.error("no show in selected theatre...");
 			System.out.println("outside show loop");
 			model.put("showsList", showsinList);
 			model.put("message", "Sorry, no shows in this theatre .");
@@ -353,7 +382,7 @@ public class MainController {
 		booking.setFlag(0);
 		Integer available_seats = showService.getAvailableSeats(Integer.parseInt(showId));
 		if (seatsBooked > available_seats) {
-
+			logger.error("customer over booking seats...");
 			return new ModelAndView("ChoseShowPage", "error", "too many booked seats");
 		} else {
 			booking.setSeatsBooked(seatsBooked);
@@ -374,6 +403,7 @@ public class MainController {
 				bookingStatus=true;
 			}
 			if (bookingStatus == true) {
+				logger.info("customer booked movie...");
 				BigInteger bookingId = bookingService.getBookingId((BigInteger) (httpSession.getAttribute("customerId")));
 				String bookingstatus = "Succesfull! ";
 				model.put("bookingId", bookingId);
@@ -390,12 +420,14 @@ public class MainController {
 
 	@RequestMapping(value = "/ViewBookingPage", method = RequestMethod.GET) // Page for viewing booking
 	public ModelAndView getAllBookings() {
+		logger.info("customer viewing bookings...");
 		List<Booking> bookings = bookingService.viewBookings((BigInteger) (httpSession.getAttribute("customerId")));
 		return new ModelAndView("ViewBookingPage", "data", bookings);
 	}
 
 	@RequestMapping(value = "/CancelBooking", method = RequestMethod.GET) // Page for cancelling booking
 	public ModelAndView cancelBookingPage(Map<String, Object> model) {
+		logger.info("customer trying to cancel booking...");		
 		List<Booking> bookings = bookingService.viewBookings((BigInteger) httpSession.getAttribute("customerId"));
 		model.put("bookings", bookings);
 		return new ModelAndView("CancelBooking", "data", bookings);
@@ -405,6 +437,7 @@ public class MainController {
 	public String cancelBooking(@RequestParam("bookingId") String bookingId, Map<String, Object> model) {
 		
 		bookingService.cancelBooking(new BigInteger(bookingId));
+		logger.info("customer cancelled booking...");
 		return "CustomerPage";
 
 	}
